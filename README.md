@@ -31,6 +31,12 @@ To install express via NPM (Node Package Manager)
 ```
 npm install express
 ```
+
+To build your react components run
+```
+npm run build
+```
+
 To run the example, and start the express server run the following command.
 The server will run on port 5000, you can change the port in the code if you wish.
 ```
