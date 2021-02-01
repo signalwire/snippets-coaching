@@ -4,14 +4,14 @@ const express = require('express');
 const VoiceResponse = require('twilio').twiml.VoiceResponse;
 
 // Enviroment Vars
-var SIGNALWIRE_SPACE = "xxxxx.signalwire.com"; 
+var SIGNALWIRE_SPACE = process.env.SIGNALWIRE_SPACE; 
 
-const CONF_NAME = "Example-Conference";
-const HOSTNAME = "http://";
+var CONF_NAME = process.env.CONFERENCE_NAME;
+var HOSTNAME = process.env.HOSTNAME;
 
-const INBOUND = "+";  
-const AGENT = "+"; 
-const SUPERVISOR = "+"; 
+var INBOUND = process.env.INBOUND_NUMBER;  
+var AGENT = process.env.AGENT_NUMBER; 
+var SUPERVISOR = process.env.SUPERVISOR_NUMBER; 
 var CUSTOMER_NUMBER = "+";
 
 // Do Not Edit
@@ -19,8 +19,8 @@ var customerCallSid = "";
 var agentCallSid = "";
 var supervisorCallSid = "";
 
-var accountSid = "";
-var authToken = "";
+var accountSid = process.env.SIGNALWIRE_PROJECT;
+var authToken = process.env.SIGNALWIRE_TOKEN;
 
 const {
   RestClient
