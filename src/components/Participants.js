@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { CallRecordings } from './CallRecordings';
 import {CallerDetails} from './CallerDetails';
+import {SupervisorControls} from './SupervisorControls'
 
 export class Participants extends Component {
     static displayName = Participants.name;
@@ -51,43 +52,6 @@ export class Participants extends Component {
              });
         }
 
-        function supervisorControls(participant){
-
-            if(participant.coaching && participant.muted){
-                return (
-                    <div>
-                        <strong>Supervisor Controls:</strong>
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "barge", "")}}>[Barge]</span> 
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "monitor", "")}}><strong>[Monitor]</strong></span> 
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "coach", "")}}>[Coach]</span>
-                    </div>    
-                )
-            }else if(!participant.coaching && !participant.muted){
-                return (
-                    <div>
-                        <strong>Supervisor Controls:</strong>
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "barge", "")}}><strong>[Barge]</strong></span> 
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "monitor", "")}}>[Monitor]</span> 
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "coach", "")}}>[Coach]</span>
-                    </div>    
-                )
-            }else if(participant.coaching && !participant.muted){
-                return (
-                    <div>
-                        <strong>Supervisor Controls:</strong>
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "barge", "")}}>[Barge]</span> 
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "monitor", "")}}>[Monitor]</span> 
-                        <span onClick={()=>{updateConference(participant.conference_sid, participant.call_sid, "coach", "")}}><strong>[Coach]</strong></span>
-                    </div>    
-                )
-            }
-            
-
-            return "";
-        }
-
-        
-  
         return (
            <div>
             {
@@ -109,7 +73,13 @@ export class Participants extends Component {
                             <div>end_conference_on_exit: {participant.end_conference_on_exit.toString()} </div>
                             <br />
                             <strong>Call Actions:</strong><span onClick={()=>{updateCall(participant.call_sid)}}>[Rick Roll]</span> <span>[Transfer]</span> 
-                            { supervisorControls(participant) }
+                            <SupervisorControls 
+                                conferenceId={participant.conference_sid}
+                                participantId={participant.call_sid}
+                                participantMuted={participant.muted}
+                                participantCoaching={participant.coaching}
+                                participantCallSidToCoach={participant.call_sid_to_coach}
+                            />
                             </p>
 
                             <p>

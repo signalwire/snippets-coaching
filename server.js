@@ -168,7 +168,7 @@ function dial_conference(conferenceName, coachSid = "", muted = false, beep = tr
 app.get('/api/helpers/lookupCaller', async (req, res) => {
   console.log(req.query)
 
-  if(req.query.callSid === supervisorCallSid){
+  if(req.query.callSid.length > 0 && req.query.callSid === supervisorCallSid){
     var data = {
       callSid: req.query.callSid,
       number: SUPERVISOR,
@@ -177,7 +177,7 @@ app.get('/api/helpers/lookupCaller', async (req, res) => {
       isAgent: false
     }
     res.json(data);
-  }else if(req.query.callSid === customerCallSid){
+  }else if(req.query.callSid.length > 0 && req.query.callSid === customerCallSid){
     var data = {
       callSid: req.query.callSid,
       number: CUSTOMER_NUMBER,
@@ -186,7 +186,7 @@ app.get('/api/helpers/lookupCaller', async (req, res) => {
       isAgent: false
     }
     res.json(data);
-  }else if(req.query.callSid === agentCallSid){
+  }else if(req.query.callSid.length > 0 && req.query.callSid === agentCallSid){
     var data = {
       callSid: req.query.callSid,
       number: AGENT,
@@ -421,29 +421,62 @@ app.get('/api/participants', async (req, res) => {
 
 });
 
+/*
+curl -X POST https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID/Conferences/CFXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX/Participants/CAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX.json \
+--data-urlencode "Muted=True" \
+-u $TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN
+*/
 app.get('/api/conferences/update', async (req, res) => {
   console.log("-- conference update start --")
   console.log(req.query)
 
+  var result = "";
   if(req.query.cmd === "barge"){
-    client.conferences(req.query.conferenceId)
+    result = await client.conferences(req.query.conferenceId)
         .participants(req.query.participantId)
-        .update({muted: false, coach: false, call_sid_to_coach: ""})
-        .then(participant => console.log(participant));
+        .update({muted: false, coaching: false, call_sid_to_coach: ""})
+        .then(participant => 
+          { 
+            console.log("-- barge result start --");
+            console.log(result);
+            console.log(participant) 
+            console.log("-- barge result end --");
+
+            return res.json(participant);
+          }
+        );
   }
 
   if(req.query.cmd === "monitor"){
-    client.conferences(req.query.conferenceId)
+    result = await client.conferences(req.query.conferenceId)
         .participants(req.query.participantId)
         .update({muted: true})
-        .then(participant => console.log(participant));
+        .then(participant => 
+          { 
+            console.log("-- monitor result start --");
+            console.log(result);
+            console.log(participant) 
+            console.log("-- monitor result end --");
+
+            return res.json(participant);
+          }
+        );
   }
 
   if(req.query.cmd === "coach" && req.query.coachSid.length>0){
-    client.conferences(req.query.conferenceId)
+    result = await client.conferences(req.query.conferenceId)
         .participants(req.query.participantId)
-        .update({muted: false, coach: true, call_sid_to_coach: req.query.coachSid})
-        .then(participant => console.log(participant));
+        .update({muted: false, coaching: true, call_sid_to_coach: req.query.coachSid})
+        .then(participant => 
+          { 
+            console.log("-- coach result start --");
+            console.log(result);
+            console.log(participant) 
+            console.log("-- coach result end --");
+
+            return res.json(participant);
+          }
+        );
   }
   console.log("-- conference update end --")
   res.send(200);
